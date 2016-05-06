@@ -23,10 +23,17 @@ func formatScore(x float64) string {
 
 // HighScoresHandler handles the stats page
 func HighScoresHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.URL.Path != "/high_scores/" {
+		http.Redirect(w, r, "/high_scores/", http.StatusTemporaryRedirect)
+		return
+	}
+
 	// write to boltdb
 	db, err := bolt.Open(DBPath, 0755, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Println("Failed to open bolt database: ", err)
+		ErrorHandler(w, r, http.StatusInternalServerError)
 		return
 	}
 	defer db.Close()

@@ -19,6 +19,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		db, err := bolt.Open(DBPath, 0755, &bolt.Options{Timeout: 1 * time.Second})
 		if err != nil {
 			log.Println("Failed to open bolt database: ", err)
+			ErrorHandler(w, r, http.StatusInternalServerError)
 			return
 		}
 		defer db.Close()
@@ -57,5 +58,5 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.NotFound(w, r)
+	ErrorHandler(w, r, http.StatusNotFound)
 }
